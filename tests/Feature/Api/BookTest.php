@@ -70,7 +70,7 @@ class BookTest extends TestCase
      */
     public function test_books_item_retrieved(): void
     {
-        $book = Book::latest()->first();
+        $book = Book::inRandomOrder()->first();
         $resource = (new BookResource($book))->resolve();
 
         $this->getJson('/api/books/' . $book->id)
@@ -133,7 +133,9 @@ class BookTest extends TestCase
 
         $location = route('api.books.show', $book);
 
-        $response->assertStatus(201)->assertLocation($location);
+        $response->assertStatus(201)
+            ->assertLocation($location)
+            ->assertJson(['id' => $book->id]);
     }
 
     /**
@@ -174,5 +176,32 @@ class BookTest extends TestCase
         $this->postJson('/api/books', $data)
             ->assertStatus(422)
             ->assertJsonValidationErrorFor('price');
+    }
+
+    /**
+     * Create book route test.
+     *
+     * @return void
+     */
+    public function test_books_item_updated(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $book = Book::latest()->first();
+        $data = [
+            "price" => $this->faker->randomFloat(2, 0.01, 9999999.99)
+        ];
+        $response = $this->patchJson('/api/books/' . $book->id, $data);
+
+        $book->refresh();
+
+        $this->assertEquals($data['price'], $book->price);
+
+        $resource = (new BookResource($book))->resolve();
+
+        $response->assertStatus(200)->assertJson([
+            'id' => $resource['id'],
+            'price' => $resource['price']
+        ]);
     }
 }

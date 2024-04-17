@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreBookRequest;
+use App\Http\Requests\Api\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
@@ -57,13 +57,16 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
+     * @param  UpdateBookRequest  $request
+     * @param  Book               $book
+     * @return JsonResponse
      */
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        //
+        $data = $request->validated();
+        $book->update($data);
+
+        return (new BookResource($book))->response();
     }
 
     /**
