@@ -11,7 +11,18 @@ use Tests\TestCase;
 
 class BookTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
+
+    /**
+     * Setup the test environment.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->setUpFaker();
+    }
 
     /**
      * List all books route test.
@@ -59,7 +70,7 @@ class BookTest extends TestCase
      */
     public function test_books_item_retrieved(): void
     {
-        $book = Book::factory()->create();
+        $book = Book::latest()->first();
         $resource = (new BookResource($book))->resolve();
 
         $this->getJson('/api/books/' . $book->id)
@@ -86,5 +97,82 @@ class BookTest extends TestCase
     {
         $this->getJson('/api/books/0')
             ->assertStatus(404);
+    }
+
+    /**
+     * Create book route test.
+     *
+     * @return void
+     */
+    public function test_books_item_created(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $data = [
+            "title"             => rtrim($this->faker->sentence(5), '.'),
+            "publisher"         => $this->faker->company(),
+            "author"            => $this->faker->name(),
+            "genre"             => $this->faker->randomElement(\App\Enums\Genre::class)->value,
+            "publication_date"  => $this->faker->date(),
+            "words_number"      => $this->faker->numberBetween(),
+            "price"             => $this->faker->randomFloat(2, 0.01, 9999999.99)
+        ];
+        $response = $this->postJson('/api/books', $data);
+
+        $this->assertDatabaseCount('books', \Database\Seeders\BookSeeder::SEED_COUNT + 1);
+
+        $book = Book::latest()->first();
+
+        $this->assertEquals($data['title'], $book->title);
+        $this->assertEquals($data['publisher'], $book->publisher);
+        $this->assertEquals($data['author'], $book->author);
+        $this->assertEquals($data['genre'], $book->genre->value);
+        $this->assertEquals($data['publication_date'], $book->publication_date->toDateString());
+        $this->assertEquals($data['words_number'], $book->words_number);
+        $this->assertEquals($data['price'], $book->price);
+
+        $location = route('api.books.show', $book);
+
+        $response->assertStatus(201)->assertLocation($location);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_books_item_genre_attr_is_valid(): void
+    {
+        $data = [
+            "title"             => rtrim($this->faker->sentence(5), '.'),
+            "publisher"         => $this->faker->company(),
+            "author"            => $this->faker->name(),
+            "genre"             => 'Fake',
+            "publication_date"  => $this->faker->date(),
+            "words_number"      => $this->faker->numberBetween(),
+            "price"             => $this->faker->randomFloat(2, 0.01, 9999999.99)
+        ];
+
+        $this->postJson('/api/books', $data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrorFor('genre');
+    }
+
+    /**
+     * @return void
+     */
+    public function test_books_item_price_attr_is_valid(): void
+    {
+        $data = [
+            "title"             => rtrim($this->faker->sentence(5), '.'),
+            "publisher"         => $this->faker->company(),
+            "author"            => $this->faker->name(),
+            "genre"             => $this->faker->randomElement(\App\Enums\Genre::class)->value,
+            "publication_date"  => $this->faker->date(),
+            "words_number"      => $this->faker->numberBetween(),
+            "price"             => 0
+        ];
+
+        $this->postJson('/api/books', $data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrorFor('price');
     }
 }

@@ -10,6 +10,8 @@ class BookSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    const SEED_COUNT = 100;
+
     /**
      * Run the database seeds.
      *
@@ -17,6 +19,6 @@ class BookSeeder extends Seeder
      */
     public function run()
     {
-        Book::factory()->count(100)->create();
+        Book::factory()->count(self::SEED_COUNT)->create();
     }
 }

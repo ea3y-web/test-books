@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\JsonResponse;
@@ -28,12 +29,18 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreBookRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
-        //
+        $data = $request->validated();
+        $book = Book::create($data);
+        $location = route('api.books.show', $book);
+
+        return (new BookResource($book))->response()->withHeaders([
+           'Location' => $location
+        ]);
     }
 
     /**
