@@ -179,7 +179,7 @@ class BookTest extends TestCase
     }
 
     /**
-     * Create book route test.
+     * Update book route method test.
      *
      * @return void
      */
@@ -203,5 +203,21 @@ class BookTest extends TestCase
             'id' => $resource['id'],
             'price' => $resource['price']
         ]);
+    }
+
+    /**
+     * Delete book route method test.
+     *
+     * @return void
+     */
+    public function test_books_item_deleted(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $book = Book::latest()->first();
+        $response = $this->deleteJson('/api/books/' . $book->id);
+
+        $this->assertModelMissing($book);
+        $response->assertStatus(204);
     }
 }
