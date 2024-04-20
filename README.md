@@ -12,9 +12,12 @@ Test Books App requires the following dependencies :
 
 ### Installation (Docker)
 
-1. Provide required settings in the .env file.
+1. Create a local .env file
+`cp .env.example .env`
 
-I.e. App's URL, DB hostname (equals to the DB container name), etc.
+Provide it with the required settings, i.e.
+DB hostname (equals to the DB container name `test-books-db`),
+DB user, etc.
 
 2. Create and start containers :
 `docker compose up -d`
@@ -22,10 +25,11 @@ I.e. App's URL, DB hostname (equals to the DB container name), etc.
 3. Execute an interactive shell on the app container :
 `docker exec -it test-books-app bash`
 
-And run the following commands :
+Run the following commands :
 
 ```bash
 composer install
+php artisan key:generate
 php artisan migrate
 php artisan db:seed
 ```
@@ -39,18 +43,21 @@ php artisan db:seed
 
 2. Create the database and provide connection details in the .env file.
 
-3. Run database migrations :
+3. Generate app's key :
+`php artisan key:generate`
+
+4. Run database migrations :
 `php artisan migrate`
 
-4. Run database seeders :
+5. Run database seeders :
 `php artisan db:seed`
 
 ### After installation
 
-Navigate to the books index URL:
+Navigate to the app's homepage:
 
-- [if app is run via Laravel's build-in server](http://127.0.0.1:8000)
-- [if app is run via Docker](http://localhost)
+- [if run via Laravel's build-in server](http://127.0.0.1:8000)
+- [if run via Docker](http://localhost)
 
 ### Available CLI-commands
 
