@@ -1,7 +1,7 @@
 FROM php:8.3-fpm
 
-ARG UID
-ARG GID
+ARG UID=1000
+ARG GID=1000
 ARG USER=books-app
 
 # Install system dependencies

@@ -18,7 +18,7 @@
 		}
 	},
 	"remoteUser": "books-app",
-	"postCreateCommand": "chown -R 1001:1010 /var/www/html 2>/dev/null || true"
+	"postCreateCommand": "chown -R books-app:books-app /var/www/html 2>/dev/null || true"
 	// "forwardPorts": [],
 	// "runServices": [],
 	// "shutdownAction": "none",
