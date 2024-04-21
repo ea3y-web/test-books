@@ -2,6 +2,13 @@
 
 namespace App\Enums;
 
+/**
+ * @OA\Schema(
+ *      title="Genre",
+ *      description="Genre of book",
+ *      type="string"
+ * )
+ */
 enum Genre: string
 {
     case FANTASY = "Fantasy";
