@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller as BaseController;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Laravel OpenApi Demo Documentation",
- *      description="L5 Swagger OpenApi description",
+ *      title="Simple REST API application OpenAPI Documentation",
+ *      description="Description of REST routes to work with books OpenAPI (generated with L5 Swagger).",
  *      @OA\Contact(
  *          email="admin@admin.com"
  *      ),

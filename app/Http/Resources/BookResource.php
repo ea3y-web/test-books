@@ -16,7 +16,6 @@ class BookResource extends JsonResource
     {
         $data = parent::toArray($request);
 
-        $data['price'] = '$' . $this->resource->price;
         unset($data['created_at']);
         unset($data['updated_at']);
 

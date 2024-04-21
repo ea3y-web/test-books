@@ -94,10 +94,10 @@ class BookResource
      * @OA\Property(
      *      title="Price",
      *      description="Price of the book",
-     *      example="$9.99"
+     *      example=9.99
      * )
      *
-     * @var string
+     * @var float
      */
     public $price;
 }
