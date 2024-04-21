@@ -13,10 +13,12 @@ class Controller extends BaseController
 
     const PER_PAGE_DEFAULT = 20;
 
+    const PER_PAGE_MIN = 5;
+
     const PER_PAGE_MAX = 50;
 
     /**
-     * Get the pagination size.
+     * Get the number of records to show in the listing.
      *
      * @return int
      */
@@ -24,7 +26,9 @@ class Controller extends BaseController
     {
         $perPage = request()->query('per_page', self::PER_PAGE_DEFAULT);
 
-        if ($perPage > self::PER_PAGE_MAX) {
+        if ($perPage < self::PER_PAGE_MIN) {
+            $perPage = self::PER_PAGE_MIN;
+        } elseif ($perPage > self::PER_PAGE_MAX) {
             $perPage = self::PER_PAGE_MAX;
         }
 
